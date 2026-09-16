@@ -35,6 +35,7 @@
     defaultFetchModels,
     defaultFetchRecent,
   } from '../index/schedules.js';
+  import { createSchedulesEvents } from '../index/schedules-events.js';
 
   let schedules = $state([]);
   let loading = $state(true);
@@ -98,8 +99,8 @@
     `${String(form.hour).padStart(2, '0')}:${String(form.minute).padStart(2, '0')}`,
   );
 
-  async function refresh() {
-    loading = true;
+  async function refresh({ silent = false } = {}) {
+    if (!silent) loading = true;
     loadError = '';
     try {
       const data = await defaultFetchSchedules();
@@ -107,7 +108,7 @@
     } catch (err) {
       loadError = err.message || String(err);
     } finally {
-      loading = false;
+      if (!silent) loading = false;
     }
   }
 
@@ -123,6 +124,13 @@
         recent = Array.isArray(data.locations) ? data.locations : [];
       })
       .catch(() => {});
+    const events = createSchedulesEvents({
+      onChange: () => {
+        refresh({ silent: true });
+      },
+    });
+    events.connect();
+    return () => events.cleanup();
   });
 
   function openCreate() {

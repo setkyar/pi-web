@@ -60,6 +60,20 @@ export function createScratchpadController({
     if (textarea) lastSaved = textarea.value;
   }
 
+  function isDirty() {
+    return !!(textarea && textarea.value !== lastSaved);
+  }
+
+  function applyRemote(content) {
+    if (!textarea) return false;
+    if (isDirty()) return false;
+    const next = content ?? '';
+    textarea.value = next;
+    lastSaved = next;
+    setStatus('Saved', 'saved');
+    return true;
+  }
+
   function bind() {
     textarea?.addEventListener('input', onInput);
     return () => {
@@ -73,6 +87,8 @@ export function createScratchpadController({
     save,
     setStatus,
     adoptCurrentValue,
+    isDirty,
+    applyRemote,
     bind,
   };
 }

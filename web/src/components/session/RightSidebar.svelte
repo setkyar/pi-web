@@ -6,6 +6,7 @@
   import AnnotationLayer from './AnnotationLayer.svelte';
   import { sessionRuntime } from '../../session/session-runtime.js';
   import { createScratchpadController } from './right-sidebar-scratchpad.js';
+  import { createScratchpadEvents } from '../../index/scratchpad-events.js';
 
   let { scratchpad = '', projectPath = '', annotationConfig = {} } = $props();
 
@@ -130,6 +131,16 @@
     });
     loadScratchpad = scratchpadController.load;
     if (textarea) cleanups.push(scratchpadController.bind());
+    const scratchpadEvents = createScratchpadEvents({
+      onChange: (payload) => {
+        if (!payload || payload.project !== projectPath) return;
+        scratchpadController.applyRemote(payload.content ?? '');
+      },
+    });
+    try {
+      scratchpadEvents.connect();
+      cleanups.push(() => scratchpadEvents.cleanup());
+    } catch {}
 
     function getRightSidebarBounds() {
       const rootStyles = windowImpl.getComputedStyle(documentImpl.documentElement);
