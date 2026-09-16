@@ -9,7 +9,7 @@ import * as searchFiltersApi from '../ui/search-filters.js';
 import * as toggleStateApi from '../ui/toggle-state.js';
 import { configureSettingsSync, hydrateSettings } from '../../shared/settings-store.js';
 import { applyRemoteSettings } from '../../shared/settings-live.js';
-import { createSettingsEvents } from '../../index/settings-events.js';
+import { createAppEvents } from '../../shared/app-events.js';
 import { getSessionRuntime } from '../session-runtime-context.js';
 
 export function startSessionPageRuntime({
@@ -80,10 +80,11 @@ export function startSessionPageRuntime({
   );
 
   const disposeGlobals = setupSessionGlobals({ windowImpl, documentImpl });
-  const settingsEvents = createSettingsEvents({
+  const settingsEvents = createAppEvents({
+    event: 'settings',
     EventSourceImpl: windowImpl.EventSource,
     windowImpl,
-    onChange: (payload) => {
+    onEvent: (payload) => {
       applyRemoteSettings(payload, {
         storage: windowImpl.localStorage,
         documentImpl,

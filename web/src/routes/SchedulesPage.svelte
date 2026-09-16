@@ -35,7 +35,7 @@
     defaultFetchModels,
     defaultFetchRecent,
   } from '../index/schedules.js';
-  import { createSchedulesEvents } from '../index/schedules-events.js';
+  import { createAppEvents } from '../shared/app-events.js';
 
   let schedules = $state([]);
   let loading = $state(true);
@@ -124,8 +124,9 @@
         recent = Array.isArray(data.locations) ? data.locations : [];
       })
       .catch(() => {});
-    const events = createSchedulesEvents({
-      onChange: () => {
+    const events = createAppEvents({
+      event: 'schedules',
+      onEvent: () => {
         refresh({ silent: true });
       },
     });

@@ -12,7 +12,7 @@
   import { t } from '../shared/i18n.js';
   import { navigate } from '../shared/navigation.js';
   import { loadSettings, persistSetting } from '../settings/settings-support.js';
-  import { createSettingsEvents } from '../index/settings-events.js';
+  import { createAppEvents } from '../shared/app-events.js';
   import { applyRemoteSettings } from '../shared/settings-live.js';
 
   let settings = $state({});
@@ -125,8 +125,9 @@
         settings = loaded || {};
       })
       .catch(() => {});
-    const settingsEvents = createSettingsEvents({
-      onChange: (payload) => {
+    const settingsEvents = createAppEvents({
+      event: 'settings',
+      onEvent: (payload) => {
         const next = applyRemoteSettings(payload, {
           storage: localStorage,
           documentImpl: document,

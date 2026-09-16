@@ -68,6 +68,9 @@ export function createScratchpadController({
     if (!textarea) return false;
     if (isDirty()) return false;
     const next = content ?? '';
+    // Our own debounced save echoes back over SSE; reassigning value would
+    // move the caret for no reason.
+    if (textarea.value === next) return true;
     textarea.value = next;
     lastSaved = next;
     setStatus('Saved', 'saved');

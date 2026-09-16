@@ -7,7 +7,7 @@
   import ProjectsModal from '../components/index/ProjectsModal.svelte';
   import SessionsList from '../components/index/SessionsList.svelte';
   import { createStatusEvents } from '../shared/status-events.js';
-  import { createSettingsEvents } from '../index/settings-events.js';
+  import { createAppEvents } from '../shared/app-events.js';
   import { applyRemoteSettings } from '../shared/settings-live.js';
   import { openSessionPalette, refreshSessionPalette } from '../shared/command-palette-runtime.js';
   import { setupKeyboardNav } from '../shared/keyboard-nav.js';
@@ -254,8 +254,9 @@
     try {
       statusEvents.connect();
     } catch {}
-    const settingsEvents = createSettingsEvents({
-      onChange: (payload) => {
+    const settingsEvents = createAppEvents({
+      event: 'settings',
+      onEvent: (payload) => {
         applyRemoteSettings(payload, {
           storage: localStorage,
           documentImpl: document,

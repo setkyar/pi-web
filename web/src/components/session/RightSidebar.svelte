@@ -6,7 +6,7 @@
   import AnnotationLayer from './AnnotationLayer.svelte';
   import { sessionRuntime } from '../../session/session-runtime.js';
   import { createScratchpadController } from './right-sidebar-scratchpad.js';
-  import { createScratchpadEvents } from '../../index/scratchpad-events.js';
+  import { createAppEvents } from '../../shared/app-events.js';
 
   let { scratchpad = '', projectPath = '', annotationConfig = {} } = $props();
 
@@ -131,8 +131,9 @@
     });
     loadScratchpad = scratchpadController.load;
     if (textarea) cleanups.push(scratchpadController.bind());
-    const scratchpadEvents = createScratchpadEvents({
-      onChange: (payload) => {
+    const scratchpadEvents = createAppEvents({
+      event: 'scratchpad',
+      onEvent: (payload) => {
         if (!payload || payload.project !== projectPath) return;
         scratchpadController.applyRemote(payload.content ?? '');
       },
